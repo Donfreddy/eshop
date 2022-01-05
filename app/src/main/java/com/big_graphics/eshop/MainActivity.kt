@@ -1,18 +1,21 @@
 package com.big_graphics.eshop
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Window
+import android.view.KeyEvent
+import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class MainActivity : AppCompatActivity() {
@@ -37,7 +40,8 @@ class MainActivity : AppCompatActivity() {
     webSetting.loadsImagesAutomatically = true
     webSetting.setSupportMultipleWindows(true)
 
-    // webView.webViewClient = MyWebViewClient()
+    webView.webViewClient = MyWebViewClient()
+    webView.webChromeClient = MyWebChromeClient()
 
 //    if(hasConnection(this)){
 //      webView.loadUrl("https://dribbble.com")
@@ -53,7 +57,16 @@ class MainActivity : AppCompatActivity() {
 
     // webView.loadUrl("https://dribbble.com")
     webView.loadUrl("https://eShop.big-graphics.com")
-    // webView.loadUrl("https://big-graphics.com")
+    // webView.loadUrl("https://www.amazon.fr")
+  }
+
+  override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    // Check if the key event was the Back button and if there's history
+    if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+      webView.goBack()
+      return true
+    }
+    return super.onKeyDown(keyCode, event)
   }
 
   private fun hasConnection(context: Context): Boolean {
@@ -79,13 +92,5 @@ class MainActivity : AppCompatActivity() {
       }
     }
     return false
-  }
-
-  override fun onBackPressed() {
-    if (webView.canGoBack()) {
-      webView.goBack()
-    } else {
-      super.onBackPressed()
-    }
   }
 }
