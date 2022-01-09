@@ -4,20 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-      android:id="@+id/swipe_refresh"
+  <RelativeLayout
+      android:id="@+id/internetLayout"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/web_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+      <WebView
+          android:id="@+id/web_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
 
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+  </RelativeLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/noInternetLayout"
+      android:background="@color/white"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="DuplicateIds">
+
+    <TextView
+        android:id="@+id/no_internet_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_internet_connection"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>
