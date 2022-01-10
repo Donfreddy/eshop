@@ -1,36 +1,46 @@
 package com.big_graphics.eshop
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
-import android.webkit.WebChromeClient
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.airbnb.lottie.LottieAnimationView
 
 class MainActivity : AppCompatActivity() {
-  private lateinit var swipeRefreshLayout: SwipeRefreshLayout
   private lateinit var webView: WebView
+  private lateinit var noInternetView: LottieAnimationView
   private lateinit var webSetting: WebSettings
 
+  private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+      val notConnected = intent.getBooleanExtra(
+        ConnectivityManager
+          .EXTRA_NO_CONNECTIVITY, false
+      )
+      if (notConnected) {
+        disconnected()
+      } else {
+        connected()
+      }
+    }
+  }
 
   @SuppressLint("SetJavaScriptEnabled")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    swipeRefreshLayout = findViewById(R.id.swipe_refresh)
     webView = findViewById(R.id.web_view)
+    noInternetView = findViewById(R.id.lottie)
     webSetting = webView.settings
 
     // Web View settings
@@ -41,23 +51,16 @@ class MainActivity : AppCompatActivity() {
     webSetting.setSupportMultipleWindows(true)
 
     webView.webViewClient = MyWebViewClient()
-    webView.webChromeClient = MyWebChromeClient()
+  }
 
-//    if(hasConnection(this)){
-//      webView.loadUrl("https://dribbble.com")
-//    } else run {
-//      val internetErrorDialog = Dialog(this)
-//
-//      internetErrorDialog.window!!.requestFeature(Window.FEATURE_ACTION_BAR)
-//      internetErrorDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//      internetErrorDialog.setCancelable(true)
-//      // internetErrorDialog.setContentView()
-//      internetErrorDialog.show()
-//    }
+  override fun onStart() {
+    super.onStart()
+    registerReceiver(broadcastReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+  }
 
-    // webView.loadUrl("https://dribbble.com")
-    webView.loadUrl("https://eShop.big-graphics.com")
-    // webView.loadUrl("https://www.amazon.fr")
+  override fun onStop() {
+    super.onStop()
+    unregisterReceiver(broadcastReceiver)
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -69,28 +72,14 @@ class MainActivity : AppCompatActivity() {
     return super.onKeyDown(keyCode, event)
   }
 
-  private fun hasConnection(context: Context): Boolean {
-    val connectivityManager =
-      context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val capabilities =
-      connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+  private fun disconnected() {
+    webView.visibility = GONE
+    noInternetView.visibility = VISIBLE
+  }
 
-    if (capabilities != null) {
-      when {
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-          Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-          return true
-        }
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-          Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-          return true
-        }
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-          Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-          return true
-        }
-      }
-    }
-    return false
+  private fun connected() {
+    webView.visibility = VISIBLE
+    noInternetView.visibility = GONE
+    webView.loadUrl("https://eShop.big-graphics.com")
   }
 }

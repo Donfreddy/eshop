@@ -13,20 +13,6 @@ class MyWebViewClient : WebViewClient() {
     if (Uri.parse(url).host == "eshop.big-graphics.com") {
       return false
     }
-
-    Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-     //  startActivity(this)
-    }
     return true
   }
-
-  override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-    super.onPageStarted(view, url, favicon)
-  }
-
-  override fun onPageFinished(view: WebView?, url: String?) {
-    super.onPageFinished(view, url)
-  }
 }
-
-class MyWebChromeClient : WebChromeClient() {}
