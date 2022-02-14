@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+    supportActionBar?.hide()
 
     webView = findViewById(R.id.web_view)
     noInternetView = findViewById(R.id.lottie)
@@ -80,6 +81,6 @@ class MainActivity : AppCompatActivity() {
   private fun connected() {
     webView.visibility = VISIBLE
     noInternetView.visibility = GONE
-    webView.loadUrl("https://eShop.big-graphics.com")
+    webView.loadUrl(Utils.URL)
   }
 }
